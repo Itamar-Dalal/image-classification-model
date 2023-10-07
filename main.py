@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 from typing import Tuple
+import matplotlib.pyplot as plt
 
 
 class ImageGenerator:
@@ -12,30 +13,24 @@ class ImageGenerator:
         pass
 
     def load_dataset(
-        self,
-    ) -> Tuple[
-        Tuple[np.ndarray, np.ndarray],
-        Tuple[np.ndarray, np.ndarray],
-        Tuple[np.ndarray, np.ndarray],
-    ]:
+        self, batch_size: int = 32
+    ) -> Tuple[tf.data.Dataset, tf.data.Dataset, tf.data.Dataset]:
         """
-        Loading the CIFAR-10 dataset.
+        Loading the CIFAR-10 dataset and batching the data.
 
-        x_train: This variable will hold the training images. These are the images used to train a machine learning model.
-        y_train: This variable will hold the corresponding labels or class indices for the training images.
-        x_test: This variable will hold the testing images. These are used to evaluate the model's performance.
-        y_test: This variable will hold the corresponding labels or class indices for the testing images.
+        batch_size: The size of each batch for training, validation, and testing data.
+
+        Returns:
+        train_dataset: A TensorFlow Dataset containing training data batches.
+        validation_dataset: A TensorFlow Dataset containing validation data batches.
+        test_dataset: A TensorFlow Dataset containing test data batches.
         """
         (x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()
 
-        """
-        Normalize pixel values to range [0, 1].
-        """
+        # Normalize pixel values to range [0, 1].
         x_train, x_test = x_train / 255.0, x_test / 255.0
 
-        """
-        Split data into training (80%) and validation (20%) sets.
-        """
+        # Split data into training (80%) and validation (20%) sets.
         split_ratio: float = 0.2
         num_samples: int = len(x_train)
         num_validation_samples: int = int(num_samples * split_ratio)
@@ -51,15 +46,29 @@ class ImageGenerator:
             y_train[num_validation_samples:],
         )
 
-        """
-        Organize and return the data sets.
-        """
-        train_data: Tuple[np.ndarray, np.ndarray] = (x_train, y_train)
-        validation_data: Tuple[np.ndarray, np.ndarray] = (x_validation, y_validation)
-        test_data: Tuple[np.ndarray, np.ndarray] = (x_test, y_test)
-        return train_data, validation_data, test_data
+        # Create TensorFlow Datasets and batch the data.
+        train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(
+            batch_size
+        )
+        validation_dataset = tf.data.Dataset.from_tensor_slices(
+            (x_validation, y_validation)
+        ).batch(batch_size)
+        test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(
+            batch_size
+        )
+        
+        '''
+        # Visualize some examples
+        plt.figure(figsize=(10, 10))
+        for i in range(25):
+            plt.subplot(5, 5, i + 1)
+            plt.imshow(x_train[i])
+            plt.axis('off')
+        plt.show()
+        '''
+        return train_dataset, validation_dataset, test_dataset
 
 
 if __name__ == "__main__":
     img_ai: ImageGenerator = ImageGenerator()
-    img_ai.load_dataset()
+    train_data, validation_data, test_data = img_ai.load_dataset(batch_size=32)
