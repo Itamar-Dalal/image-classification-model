@@ -1,7 +1,7 @@
 # image_generator
 The model uses CNN (Convolutional Neural Network):
 ```python
-    def define_model():
+    def create_model(self):
         model = keras.Sequential(
             [
                 keras.layers.Conv2D(
@@ -24,3 +24,5 @@ The model uses CNN (Convolutional Neural Network):
 ```
 These are the layers used in CNN:
 <image src="https://miro.medium.com/max/2055/1*uAeANQIOQPqWZnnuH-VEyw.jpeg"/>
+The convolution operation:
+<image src="https://www.askpython.com/wp-content/uploads/2023/02/conv.webp"/>
