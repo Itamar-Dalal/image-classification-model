@@ -189,6 +189,7 @@ class CIFAR10Trainer(keras.Model):
                         zip(gradients, self.model.trainable_variables)
                     )
 
+                # Calculate and append validation accuracy
                 validation_accuracy = self.calculate_validation_accuracy()
                 history["val_accuracy"].append(validation_accuracy)
 
