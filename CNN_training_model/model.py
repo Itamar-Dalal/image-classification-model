@@ -44,7 +44,9 @@ class CIFAR10Trainer(keras.Model):
             super().__init__()
             if num_epochs < 1:
                 raise ValueError("num_epochs must be greater than 0")
-            self.num_epochs: int = num_epochs + 1
+            if num_epochs > 20:
+                raise ValueError("num_epochs must not be greater than 20")
+            self.num_epochs: int = num_epochs
             self.x_train: np.ndarray = None
             self.y_train: np.ndarray = None
             self.x_test: np.ndarray = None
@@ -73,7 +75,9 @@ class CIFAR10Trainer(keras.Model):
             self.evaluate_model()
             self.plot_accuracy(history)
         except Exception as e:
-            print(f"An error occurred in the main function of CIFAR10Trainer class: {str(e)}")
+            print(
+                f"An error occurred in the main function of CIFAR10Trainer class: {str(e)}"
+            )
 
     def load_dataset(
         self, batch_size: int = BATCH_SIZE
@@ -264,12 +268,18 @@ class CIFAR10Trainer(keras.Model):
             Args:
                 history (dict): Training history containing accuracy and validation accuracy for each epoch.
             """
-            plt.figure(figsize=(self.num_epochs, 6))
-            plt.plot(history["val_accuracy"], label="Validation Accuracy")
-            plt.plot(history["accuracy"], linestyle="--", label="Training Accuracy")
+            plt.figure(figsize=(8, self.num_epochs - 1))
+            x_values = range(
+                1, len(history["val_accuracy"]) + 1
+            )
+            plt.plot(x_values, history["val_accuracy"], label="Validation Accuracy")
+            plt.plot(
+                x_values, history["accuracy"], linestyle="--", label="Training Accuracy"
+            )
             plt.xlabel("Epoch")
             plt.ylabel("Accuracy")
-            plt.title("Training and Validation Accuracy")
+            plt.title("Model Training and Validation Accuracy")
+            plt.grid(True)
             plt.legend()
             plt.show()
         except Exception as e:
