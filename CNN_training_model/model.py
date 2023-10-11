@@ -284,5 +284,22 @@ class CIFAR10Trainer(keras.Model):
             plt.grid(True)
             plt.legend()
             plt.show()
+            plt.savefig("/app/plot.png")
         except Exception as e:
             print(f"An error occurred in the plot_accuracy function: {str(e)}")
+
+
+if __name__ == "__main__":
+    try:
+        num_epochs: int = input("Enter number of epoches: ")
+        while not (1 <= num_epochs <= 20):
+            print("Value Error: number of epoches must be between 1 and 20.")
+            num_epochs = input("Enter number of epoches: ")
+
+        model = CIFAR10Trainer(num_epochs)
+        model.main()
+
+    except ValueError as ve:
+        print(f"Error: {str(ve)}")
+    except Exception as e:
+        print(f"An error occurred in the main function of main.py: {str(e)}")
