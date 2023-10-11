@@ -1,4 +1,5 @@
-# image_generator
+# Image Classification Model
+This Python 3.11 program is designed for image classification using TensorFlow. It utilizes the CIFAR-10 dataset, containing 60,000 images across ten classes. The program leverages Convolutional Neural Networks (CNNs) and the Adam optimizer for efficient model training. Users can customize the number of training epochs. The program also provides a straightforward evaluation process to measure the model's test accuracy. Furthermore, it includes a tool for visualizing training and validation accuracy over epochs, aiding in monitoring the model's performance.
 The model uses CNN (Convolutional Neural Network):
 ```python
 model = keras.Sequential(
