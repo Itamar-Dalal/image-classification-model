@@ -3,7 +3,7 @@ from model import CIFAR10Trainer
 
 def main() -> None:
     try:
-        num_epochs: int = 5
+        num_epochs: int = 2
         model: CIFAR10Trainer = CIFAR10Trainer(num_epochs)
         model.main()
     except Exception as e:

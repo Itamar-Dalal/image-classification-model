@@ -42,10 +42,8 @@ class CIFAR10Trainer(keras.Model):
     def __init__(self, num_epochs: int):
         try:
             super().__init__()
-            if num_epochs < 1:
-                raise ValueError("num_epochs must be greater than 0")
-            if num_epochs > 20:
-                raise ValueError("num_epochs must not be greater than 20")
+            if not (1 <= num_epochs <= 20):
+                raise ValueError("num_epochs must be between 1 and 20")
             self.num_epochs: int = num_epochs
             self.x_train: np.ndarray = None
             self.y_train: np.ndarray = None
@@ -71,16 +69,17 @@ class CIFAR10Trainer(keras.Model):
             """
             self.load_dataset()
             self.create_model()
-            history = self.train_model()
+            self.train_model()
             self.evaluate_model()
-            self.plot_accuracy(history)
+            self.plot_accuracy()
         except Exception as e:
             print(
                 f"An error occurred in the main function of CIFAR10Trainer class: {str(e)}"
             )
 
+    @staticmethod
     def load_dataset(
-        self, batch_size: int = BATCH_SIZE
+        batch_size: int = BATCH_SIZE,
     ) -> tuple[tf.data.Dataset, tf.data.Dataset, tf.data.Dataset]:
         try:
             """
@@ -93,40 +92,40 @@ class CIFAR10Trainer(keras.Model):
                 Tuple[tf.data.Dataset, tf.data.Dataset, tf.data.Dataset]: Datasets for training, validation, and testing.
             """
             # Load and preprocess CIFAR-10 dataset.
-            (self.x_train, self.y_train), (
-                self.x_test,
-                self.y_test,
+            (x_train, y_train), (
+                x_test,
+                y_test,
             ) = keras.datasets.cifar10.load_data()
 
             # Normalize pixel values to the range [0, 1].
-            self.x_train, self.x_test = self.x_train / 255.0, self.x_test / 255.0
+            x_train, x_test = x_train / 255.0, x_test / 255.0
 
             # Split data into training (80%) and validation (20%) sets.
             split_ratio: float = 0.2
-            num_samples: int = len(self.x_train)
+            num_samples: int = len(x_train)
             num_validation_samples: int = int(num_samples * split_ratio)
             indices: np.ndarray = np.arange(num_samples)
             np.random.shuffle(indices)
-            self.x_train, self.y_train = self.x_train[indices], self.y_train[indices]
+            x_train, y_train = x_train[indices], y_train[indices]
             x_validation, y_validation = (
-                self.x_train[:num_validation_samples],
-                self.y_train[:num_validation_samples],
+                x_train[:num_validation_samples],
+                y_train[:num_validation_samples],
             )
-            self.x_train, self.y_train = (
-                self.x_train[num_validation_samples:],
-                self.y_train[num_validation_samples:],
+            x_train, y_train = (
+                x_train[num_validation_samples:],
+                y_train[num_validation_samples:],
             )
 
             # Create TensorFlow Datasets and batch the data.
             train_dataset = tf.data.Dataset.from_tensor_slices(
-                (self.x_train, self.y_train)
+                (x_train, y_train)
             ).batch(batch_size)
             validation_dataset = tf.data.Dataset.from_tensor_slices(
                 (x_validation, y_validation)
             ).batch(batch_size)
-            test_dataset = tf.data.Dataset.from_tensor_slices(
-                (self.x_test, self.y_test)
-            ).batch(batch_size)
+            test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(
+                batch_size
+            )
 
             return train_dataset, validation_dataset, test_dataset
         except Exception as e:
@@ -175,7 +174,7 @@ class CIFAR10Trainer(keras.Model):
             Returns:
                 dict: Training history containing accuracy and validation accuracy for each epoch.
             """
-            history = {"accuracy": [], "val_accuracy": []}
+            self.history = {"accuracy": [], "val_accuracy": []}
             for epoch in range(self.num_epochs):
                 for batch_data, batch_labels in self.train_dataset:
                     with tf.GradientTape() as tape:
@@ -191,17 +190,16 @@ class CIFAR10Trainer(keras.Model):
 
                 # Calculate and append validation accuracy
                 validation_accuracy = self.calculate_validation_accuracy()
-                history["val_accuracy"].append(validation_accuracy)
+                self.history["val_accuracy"].append(validation_accuracy)
 
                 # Calculate and append training accuracy
                 training_accuracy = self.calculate_training_accuracy()
-                history["accuracy"].append(training_accuracy)
+                self.history["accuracy"].append(training_accuracy)
 
                 print(
                     f"Epoch {epoch + 1}/{self.num_epochs}, Training Accuracy: {training_accuracy:.4f}, Validation Accuracy: {validation_accuracy:.4f}"
                 )
 
-            return history
         except Exception as e:
             print(f"An error occurred in the train_model function: {str(e)}")
 
@@ -261,7 +259,7 @@ class CIFAR10Trainer(keras.Model):
                 f"An error occurred in the calculate_training_accuracy function: {str(e)}"
             )
 
-    def plot_accuracy(self, history: dict) -> None:
+    def plot_accuracy(self) -> None:
         try:
             """
             Plot training and validation accuracy over epochs.
@@ -269,13 +267,16 @@ class CIFAR10Trainer(keras.Model):
             Args:
                 history (dict): Training history containing accuracy and validation accuracy for each epoch.
             """
-            plt.figure(figsize=(8, self.num_epochs - 1))
-            x_values = range(
-                1, len(history["val_accuracy"]) + 1
-            )
-            plt.plot(x_values, history["val_accuracy"], label="Validation Accuracy")
+            plt.figure(figsize=(8, 6))
+            x_values = range(1, len(self.history["val_accuracy"]) + 1)
             plt.plot(
-                x_values, history["accuracy"], linestyle="--", label="Training Accuracy"
+                x_values, self.history["val_accuracy"], label="Validation Accuracy"
+            )
+            plt.plot(
+                x_values,
+                self.history["accuracy"],
+                linestyle="--",
+                label="Training Accuracy",
             )
             plt.xlabel("Epoch")
             plt.ylabel("Accuracy")
