@@ -80,27 +80,27 @@ classification, detection, and segmentation. Many real-life applications, such a
 <image src="https://editor.analyticsvidhya.com/uploads/36181719641_uAeANQIOQPqWZnnuH-VEyw.jpeg"/>
 Here is the implementation of CNN in my code:
 
-      ```python
-      model = keras.Sequential(
-                [
-                    keras.layers.Conv2D(
-                        32,
-                        (3, 3),
-                        activation="relu",
-                        padding="same",
-                        input_shape=(self.IMAGE_HEIGHT, self.IMAGE_WIDTH, 3),
-                    ),
-                    keras.layers.MaxPooling2D((2, 2)),
-                    keras.layers.Conv2D(64, (3, 3), activation="relu", padding="same"),
-                    keras.layers.MaxPooling2D((2, 2)),
-                    keras.layers.Conv2D(128, (3, 3), activation="relu", padding="same"),
-                    keras.layers.MaxPooling2D((2, 2)),
-                    keras.layers.Flatten(),
-                    keras.layers.Dense(128, activation="relu"),
-                    keras.layers.Dense(self.NUM_CLASSES),
-                ]
-            )
-
+```python
+model = keras.Sequential(
+    [
+        keras.layers.Conv2D(
+            32,
+            (3, 3),
+            activation="relu",
+            padding="same",
+            input_shape=(self.IMAGE_HEIGHT, self.IMAGE_WIDTH, 3),
+            ),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(64, (3, 3), activation="relu", padding="same"),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(128, (3, 3), activation="relu", padding="same"),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Flatten(),
+            keras.layers.Dense(128, activation="relu"),
+            keras.layers.Dense(self.NUM_CLASSES),
+        ]
+    )
+```
 You can read more about CNN and CIFAR-10 in <a href="https://medium.com/mlearning-ai/cifar-10-image-classification-linear-model-vs-cnn-e1596ec2be26">this medium article</a>.
 
 - **Adam**: Adam is an adaptive learning rate optimization algorithm that’s been designed specifically for training deep neural networks. <br/>
