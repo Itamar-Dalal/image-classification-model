@@ -42,8 +42,8 @@ class CIFAR10Trainer(keras.Model):
     def __init__(self, num_epochs: int):
         try:
             super().__init__()
-            if not (1 <= num_epochs <= 20):
-                raise ValueError("num_epochs must be between 1 and 20")
+            if not (2 <= num_epochs <= 20):
+                raise ValueError("num_epochs must be between 2 and 20")
             self.num_epochs: int = num_epochs
             self.x_train: np.ndarray = None
             self.y_train: np.ndarray = None
@@ -291,9 +291,9 @@ class CIFAR10Trainer(keras.Model):
 
 if __name__ == "__main__":
     try:
-        num_epochs: int = input("Enter number of epoches: ")
-        while not (1 <= num_epochs <= 20):
-            print("Value Error: number of epoches must be between 1 and 20.")
+        num_epochs: int = int(input("Enter number of epoches: "))
+        while not (2 <= num_epochs <= 20):
+            print("Value Error: number of epoches must be between 2 and 20.")
             num_epochs = input("Enter number of epoches: ")
 
         model = CIFAR10Trainer(num_epochs)
