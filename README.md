@@ -50,7 +50,7 @@ If you prefer not to use Docker, you can run the project directly using Python. 
     ```shell
     python model.py
 You can specify the number of training epochs interactively when prompted.
- ### Example of `plot.png` where NUM_EPOCHES = 5:
+ ### Example of `plot.png` where NUM_EPOCHES=5:
  <image src="https://i.ibb.co/3hqGKZx/model-result.png"/>
 
 ## Acknowledgments
